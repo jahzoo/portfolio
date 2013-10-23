@@ -48,7 +48,14 @@ public class AccountListView extends AbstractListView
     private TableViewer accounts;
     private TableViewer transactions;
     private AccountContextMenu accountMenu = new AccountContextMenu(this);
-
+    private static List<Boolean> TRUE_FALSE;
+    
+    static {
+       TRUE_FALSE = new ArrayList<Boolean>();
+       TRUE_FALSE.add(Boolean.TRUE);
+       TRUE_FALSE.add(Boolean.FALSE);
+    }
+    
     @Override
     protected String getTitle()
     {
@@ -139,6 +146,20 @@ public class AccountListView extends AbstractListView
         column.setMoveable(false);
         support.addColumn(column);
 
+        column = new Column(Messages.ColumnIsReportable, SWT.None, 100);
+        column.setLabelProvider(new ColumnLabelProvider()
+        {
+            @Override
+            public String getText(Object e)
+            {
+                Account a = (Account) e;
+                return Boolean.toString(a.getIsReportable());
+            }
+        });
+        column.setSorter(ColumnViewerSorter.create(Account.class, "IsReportable")); //$NON-NLS-1$
+        column.setMoveable(false);
+        support.addColumn(column);
+        
         support.createColumns();
 
         accounts.getTable().setHeaderVisible(true);
@@ -177,6 +198,7 @@ public class AccountListView extends AbstractListView
                         }) //
                         .editable("name") // //$NON-NLS-1$
                         .readonly("balance") // //$NON-NLS-1$
+                        .combobox("isReportable",TRUE_FALSE) // //$NON-NLS-1$
                         .apply();
 
         hookContextMenu(accounts.getTable(), new IMenuListener()

@@ -31,17 +31,19 @@ public final class GroupByTaxonomy
 
     private final Taxonomy taxonomy;
     private final long valuation;
+    private final long purchasevalue;
     private final List<AssetCategory> categories = new ArrayList<AssetCategory>();
 
-    private GroupByTaxonomy(Taxonomy taxonomy, long valuation)
+    private GroupByTaxonomy(Taxonomy taxonomy, long valuation, long purchasevalue)
     {
         this.taxonomy = taxonomy;
         this.valuation = valuation;
+        this.purchasevalue = purchasevalue;
     }
 
     /* package */GroupByTaxonomy(Taxonomy taxonomy, ClientSnapshot snapshot)
     {
-        this(taxonomy, snapshot.getAssets());
+        this(taxonomy, snapshot.getAssets(), snapshot.getPurchaseValue());
 
         Map<InvestmentVehicle, Item> vehicle2position = new HashMap<InvestmentVehicle, Item>();
 
@@ -66,7 +68,7 @@ public final class GroupByTaxonomy
 
     /* package */public GroupByTaxonomy(Taxonomy taxonomy, PortfolioSnapshot snapshot)
     {
-        this(taxonomy, snapshot.getValue());
+        this(taxonomy, snapshot.getValue(),snapshot.getPurchaseValue());
 
         Map<InvestmentVehicle, Item> vehicle2position = new HashMap<InvestmentVehicle, Item>();
 
@@ -194,6 +196,11 @@ public final class GroupByTaxonomy
     public long getValuation()
     {
         return valuation;
+    }
+
+    public long getPurchaseValue()
+    {
+        return purchasevalue;
     }
 
     public List<AssetCategory> asList()

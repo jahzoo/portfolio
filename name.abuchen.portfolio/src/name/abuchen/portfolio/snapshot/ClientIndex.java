@@ -84,28 +84,32 @@ import org.joda.time.Interval;
 
         for (Account a : getClient().getAccounts())
         {
-            for (AccountTransaction t : a.getTransactions())
+            if (a.getIsReportable() == true)
             {
-                if (t.getDate().getTime() >= interval.getStartMillis()
-                                && t.getDate().getTime() <= interval.getEndMillis())
+                for (AccountTransaction t : a.getTransactions())
                 {
-                    long transferal = 0;
-                    switch (t.getType())
+                    if (t.getDate().getTime() >= interval.getStartMillis()
+                                    && t.getDate().getTime() <= interval.getEndMillis())
                     {
-                        case DEPOSIT:
-                            transferal = t.getAmount();
-                            break;
-                        case REMOVAL:
-                            transferal = -t.getAmount();
-                            break;
-                        default:
-                            // do nothing
-                    }
+                        long transferal = 0;
+                        switch (t.getType())
+                        {
+                            case DEPOSIT:
+                                transferal = t.getAmount();
+                                break;
+                            case REMOVAL:
+                                transferal = -t.getAmount();
+                                break;
+                            default:
+                                // do nothing
+                        }
 
-                    if (transferal != 0)
-                    {
-                        int ii = Days.daysBetween(interval.getStart(), new DateTime(t.getDate().getTime())).getDays();
-                        transferals[ii] += transferal;
+                        if (transferal != 0)
+                        {
+                            int ii = Days.daysBetween(interval.getStart(), new DateTime(t.getDate().getTime()))
+                                            .getDays();
+                            transferals[ii] += transferal;
+                        }
                     }
                 }
             }
@@ -113,31 +117,35 @@ import org.joda.time.Interval;
 
         for (Portfolio p : getClient().getPortfolios())
         {
-            for (PortfolioTransaction t : p.getTransactions())
+            if (p.getIsReportable() == true)
             {
-                if (t.getDate().getTime() >= interval.getStartMillis()
-                                && t.getDate().getTime() <= interval.getEndMillis())
+                for (PortfolioTransaction t : p.getTransactions())
                 {
-                    long transferal = 0;
-
-                    switch (t.getType())
+                    if (t.getDate().getTime() >= interval.getStartMillis()
+                                    && t.getDate().getTime() <= interval.getEndMillis())
                     {
-                        case DELIVERY_INBOUND:
-                            transferal = t.getAmount();
-                            break;
-                        case DELIVERY_OUTBOUND:
-                            transferal = -t.getAmount();
-                            break;
-                        default:
-                            // do nothing
-                    }
+                        long transferal = 0;
 
-                    if (transferal != 0)
-                    {
-                        int ii = Days.daysBetween(interval.getStart(), new DateTime(t.getDate().getTime())).getDays();
-                        transferals[ii] += transferal;
-                    }
+                        switch (t.getType())
+                        {
+                            case DELIVERY_INBOUND:
+                                transferal = t.getAmount();
+                                break;
+                            case DELIVERY_OUTBOUND:
+                                transferal = -t.getAmount();
+                                break;
+                            default:
+                                // do nothing
+                        }
 
+                        if (transferal != 0)
+                        {
+                            int ii = Days.daysBetween(interval.getStart(), new DateTime(t.getDate().getTime()))
+                                            .getDays();
+                            transferals[ii] += transferal;
+                        }
+
+                    }
                 }
             }
         }

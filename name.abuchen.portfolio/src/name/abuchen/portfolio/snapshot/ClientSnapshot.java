@@ -25,11 +25,14 @@ public class ClientSnapshot
         ClientSnapshot snapshot = new ClientSnapshot(client, time);
 
         for (Account account : client.getAccounts())
-            snapshot.accounts.add(AccountSnapshot.create(account, time));
+            if (account.getIsReportable()==true)
+                snapshot.accounts.add(AccountSnapshot.create(account, time));
 
-        for (Portfolio portfolio : client.getPortfolios())
-            snapshot.portfolios.add(PortfolioSnapshot.create(portfolio, time));
-
+        for (Portfolio portfolio : client.getPortfolios()) {
+            if (portfolio.getIsReportable()==true)
+                snapshot.portfolios.add(PortfolioSnapshot.create(portfolio, time));
+        }
+        
         if (snapshot.portfolios.isEmpty())
             snapshot.jointPortfolio = PortfolioSnapshot.create(new Portfolio(), time);
         else if (snapshot.portfolios.size() == 1)
@@ -91,6 +94,19 @@ public class ClientSnapshot
 
         for (PortfolioSnapshot portfolio : portfolios)
             assets += portfolio.getValue();
+
+        return assets;
+    }
+    
+    public long getPurchaseValue()
+    {
+        long assets = 0;
+
+//        for (AccountSnapshot account : accounts)
+//            assets += account.getFunds();
+
+        for (PortfolioSnapshot portfolio : portfolios)
+            assets += portfolio.getPurchaseValue();
 
         return assets;
     }

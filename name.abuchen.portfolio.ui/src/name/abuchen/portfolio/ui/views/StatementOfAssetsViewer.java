@@ -281,49 +281,80 @@ public class StatementOfAssetsViewer
             public String getText(Object e)
             {
                 Element element = (Element) e;
-                if (element.isSecurity())
-                {
-                    long purchaseValue = element.getSecurityPosition().getFIFOPurchaseValue();
-                    return purchaseValue == 0 ? null : Values.Amount.format(purchaseValue);
+                
+                if (element.isTotalValuation())
+                    return Values.Amount.format(element.getTotalPurchaseValue());
+                else if (element.isCategory())
+                    return Values.Amount.format(element.getCategory().getPurchaseValue());
+                else {
+                    if (element.isSecurity())
+                    {
+                        long purchaseValue = element.getSecurityPosition().getFIFOPurchaseValue();
+                        return purchaseValue == 0 ? null : Values.Amount.format(purchaseValue);
+                    }
+                    return null;
                 }
-                return null;
+            }
+            
+            @Override
+            public Font getFont(Object e)
+            {
+                return ((Element) e).isTotalValuation() || ((Element) e).isCategory() ? boldFont : null;
             }
         });
-        column.setVisible(false);
         support.addColumn(column);
 
         column = new Column(Messages.ColumnProfitLoss, SWT.RIGHT, 80);
         column.setLabelProvider(new ColumnLabelProvider()
         {
+            private long get_deltavalue(Object e)
+            {
+                Element element = (Element) e;
+                long delta = 0;
+                
+                if (element.isTotalValuation())
+                {
+                    delta = element.getTotalProfitLoss();
+                }
+                else if (element.isCategory())
+                {
+                    delta = element.getCategory().getProfitLoss();
+                }
+                else
+                {
+                    if (element.isSecurity())
+                    {
+                        delta = element.getSecurityPosition().getDelta();
+                    }
+                }
+                return delta;
+            }
+            
             @Override
             public String getText(Object e)
             {
-                Element element = (Element) e;
-                if (element.isSecurity())
-                {
-                    long delta = element.getSecurityPosition().getDelta();
-                    return delta == 0 ? null : Values.Amount.format(delta);
-                }
-                return null;
+                long delta = get_deltavalue(e);
+                return delta == 0 ? null : Values.Amount.format(delta);
             }
 
             @Override
             public Color getForeground(Object e)
             {
-                Element element = (Element) e;
-                if (element.isSecurity())
-                {
-                    long delta = element.getSecurityPosition().getDelta();
+                long delta = get_deltavalue(e);
 
-                    if (delta < 0)
-                        return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED);
-                    else if (delta > 0)
+                if (delta < 0)
+                    return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED);
+                else if (delta > 0)
                         return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN);
-                }
                 return null;
             }
+            
+            @Override
+            public Font getFont(Object e)
+            {
+                return ((Element) e).isTotalValuation() || ((Element) e).isCategory() ? boldFont : null;
+            }
         });
-        column.setVisible(false);
         support.addColumn(column);
 
         column = new Column(Messages.ColumnIRRPerformance, SWT.RIGHT, 80);
@@ -594,6 +625,7 @@ public class StatementOfAssetsViewer
     private static class Element implements Adaptable
     {
         private long totalValuation;
+        private long totalPurchaseValue;
         private AssetCategory category;
         private AssetPosition position;
 
@@ -609,9 +641,10 @@ public class StatementOfAssetsViewer
             this.position = position;
         }
 
-        private Element(long totalValuation)
+        private Element(long totalValuation, long totalPurchaseValue)
         {
             this.totalValuation = totalValuation;
+            this.totalPurchaseValue = totalPurchaseValue;
         }
 
         public void setPerformance(Integer year, Record record)
@@ -673,6 +706,16 @@ public class StatementOfAssetsViewer
         {
             return totalValuation;
         }
+        
+        public long getTotalPurchaseValue()
+        {
+            return totalPurchaseValue;
+        }
+
+        public long getTotalProfitLoss()
+        {
+            return totalValuation-totalPurchaseValue;
+        }
 
         public boolean isTotalValuation()
         {
@@ -716,7 +759,7 @@ public class StatementOfAssetsViewer
                 for (AssetPosition p : cat.getPositions())
                     answer.add(new Element(p));
             }
-            answer.add(new Element(categories.getValuation()));
+            answer.add(new Element(categories.getValuation(),categories.getPurchaseValue()));
             return answer.toArray(new Element[0]);
         }
 

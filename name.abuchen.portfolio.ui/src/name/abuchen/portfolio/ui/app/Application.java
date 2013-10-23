@@ -1,5 +1,8 @@
 package name.abuchen.portfolio.ui.app;
 
+import java.util.Map;
+import java.util.Properties;
+
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
@@ -14,6 +17,16 @@ public class Application implements IApplication
         Display display = PlatformUI.createDisplay();
         try
         {
+          //look in the environment for proxy settings
+            Map<String, String> env = System.getenv();
+            String envValue = env.get("PROXYHOST");
+            if (envValue != null) {
+                Properties systemProperties = System.getProperties();
+                systemProperties.setProperty("http.proxyHost", envValue);
+                envValue = env.get("PROXYPORT");
+                if (envValue != null)
+                    systemProperties.setProperty("http.proxyPort", envValue);
+            }
             int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
             if (returnCode == PlatformUI.RETURN_RESTART)
                 return IApplication.EXIT_RESTART;

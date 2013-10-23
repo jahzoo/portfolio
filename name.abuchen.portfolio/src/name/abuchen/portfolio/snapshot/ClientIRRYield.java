@@ -85,26 +85,29 @@ public class ClientIRRYield
     {
         for (Portfolio portfolio : client.getPortfolios())
         {
-            for (PortfolioTransaction t : portfolio.getTransactions())
+            if (portfolio.getIsReportable() == true)
             {
-                if (t.getDate().getTime() > start.getTime() && t.getDate().getTime() <= end.getTime())
+                for (PortfolioTransaction t : portfolio.getTransactions())
                 {
-                    switch (t.getType())
+                    if (t.getDate().getTime() > start.getTime() && t.getDate().getTime() <= end.getTime())
                     {
-                        case TRANSFER_IN:
-                        case TRANSFER_OUT:
-                        case DELIVERY_INBOUND:
-                        case DELIVERY_OUTBOUND:
-                            transactions.add(t);
-                            break;
-                        case BUY:
-                        case SELL:
-                            break;
-                        default:
-                            throw new UnsupportedOperationException();
+                        switch (t.getType())
+                        {
+                            case TRANSFER_IN:
+                            case TRANSFER_OUT:
+                            case DELIVERY_INBOUND:
+                            case DELIVERY_OUTBOUND:
+                                transactions.add(t);
+                                break;
+                            case BUY:
+                            case SELL:
+                                break;
+                            default:
+                                throw new UnsupportedOperationException();
+                        }
                     }
-                }
 
+                }
             }
         }
     }
@@ -113,30 +116,33 @@ public class ClientIRRYield
     {
         for (Account account : client.getAccounts())
         {
-            for (AccountTransaction t : account.getTransactions())
+            if (account.getIsReportable() == true)
             {
-                if (t.getDate().getTime() > start.getTime() && t.getDate().getTime() <= end.getTime())
+                for (AccountTransaction t : account.getTransactions())
                 {
-                    switch (t.getType())
+                    if (t.getDate().getTime() > start.getTime() && t.getDate().getTime() <= end.getTime())
                     {
-                        case DEPOSIT:
-                        case REMOVAL:
-                        case TRANSFER_IN:
-                        case TRANSFER_OUT:
-                            transactions.add(t);
-                            break;
-                        case BUY:
-                        case SELL:
-                        case FEES:
-                        case TAXES:
-                        case DIVIDENDS:
-                        case INTEREST:
-                            break;
-                        default:
-                            throw new UnsupportedOperationException();
+                        switch (t.getType())
+                        {
+                            case DEPOSIT:
+                            case REMOVAL:
+                            case TRANSFER_IN:
+                            case TRANSFER_OUT:
+                                transactions.add(t);
+                                break;
+                            case BUY:
+                            case SELL:
+                            case FEES:
+                            case TAXES:
+                            case DIVIDENDS:
+                            case INTEREST:
+                                break;
+                            default:
+                                throw new UnsupportedOperationException();
+                        }
                     }
-                }
 
+                }
             }
         }
     }

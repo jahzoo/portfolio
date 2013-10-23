@@ -130,6 +130,15 @@ public class PortfolioSnapshot
 
         return value;
     }
+    
+    public long getPurchaseValue()
+    {
+        long value = 0;
+        for (SecurityPosition p : positions)
+            value += p.getFIFOPurchaseValue();
+
+        return value;
+    }
 
     public GroupByTaxonomy groupByTaxonomy(Taxonomy taxonomy)
     {

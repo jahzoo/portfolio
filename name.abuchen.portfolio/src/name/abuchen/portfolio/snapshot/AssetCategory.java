@@ -11,7 +11,8 @@ public class AssetCategory
     private final List<AssetPosition> positions = new ArrayList<AssetPosition>();
     private final long totalAssets;
     private long valuation = 0;
-
+    private long purchasevalue = 0;
+    
     /* package */AssetCategory(Classification classification, long totalAssets)
     {
         this.classification = classification;
@@ -22,10 +23,25 @@ public class AssetCategory
     {
         return this.valuation;
     }
+    
+    public long getPurchaseValue()
+    {
+        return this.purchasevalue;
+    }
 
+    public long getProfitLoss()
+    {
+        return this.valuation-this.purchasevalue;
+    }
+    
     protected void setValuation(long valuation)
     {
         this.valuation = valuation;
+    }
+
+    protected void setPurchaseValue(long purchasevalue)
+    {
+        this.purchasevalue = purchasevalue;
     }
 
     public double getShare()
@@ -47,5 +63,6 @@ public class AssetCategory
     {
         this.positions.add(p);
         this.valuation += p.getValuation();
+        this.purchasevalue += p.getPurchaseValue();
     }
 }

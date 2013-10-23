@@ -1,5 +1,8 @@
 package name.abuchen.portfolio.ui.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import name.abuchen.portfolio.model.Account;
 import name.abuchen.portfolio.model.Portfolio;
 import name.abuchen.portfolio.snapshot.PortfolioSnapshot;
@@ -37,6 +40,13 @@ public class PortfolioListView extends AbstractListView
     private TableViewer portfolios;
     private StatementOfAssetsViewer statementOfAssets;
     private PortfolioTransactionsViewer transactions;
+    private static List<Boolean> TRUE_FALSE;
+    
+    static {
+       TRUE_FALSE = new ArrayList<Boolean>();
+       TRUE_FALSE.add(Boolean.TRUE);
+       TRUE_FALSE.add(Boolean.FALSE);
+    }
 
     @Override
     protected String getTitle()
@@ -130,10 +140,24 @@ public class PortfolioListView extends AbstractListView
                 return p.getReferenceAccount() != null ? p.getReferenceAccount().getName() : null;
             }
         });
-        column.setSorter(ColumnViewerSorter.create(Portfolio.class, "referenceAccount")); //$NON-NLS-1$
+        column.setSorter(ColumnViewerSorter.create(Portfolio.class, "referenceAccount"), SWT.DOWN); //$NON-NLS-1$
         column.setMoveable(false);
         support.addColumn(column);
 
+        column = new Column(Messages.ColumnIsReportable, SWT.None, 100);
+        column.setLabelProvider(new ColumnLabelProvider()
+        {
+            @Override
+            public String getText(Object e)
+            {
+                Portfolio p = (Portfolio) e;
+                return Boolean.toString(p.getIsReportable());
+            }
+        });
+        column.setSorter(ColumnViewerSorter.create(Portfolio.class, "IsReportable"), SWT.DOWN); //$NON-NLS-1$
+        column.setMoveable(false);
+        support.addColumn(column);
+        
         support.createColumns();
 
         portfolios.getTable().setHeaderVisible(true);
@@ -176,6 +200,7 @@ public class PortfolioListView extends AbstractListView
                         }) //
                         .editable("name") // //$NON-NLS-1$
                         .combobox("referenceAccount", getClient().getAccounts()) // //$NON-NLS-1$
+                        .combobox("isReportable",TRUE_FALSE) // //$NON-NLS-1$
                         .apply();
 
         hookContextMenu(portfolios.getTable(), new IMenuListener()

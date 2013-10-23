@@ -265,77 +265,83 @@ public class ClientPerformanceSnapshot
 
         for (Account account : client.getAccounts())
         {
-            for (AccountTransaction t : account.getTransactions())
+            if (account.getIsReportable() == true)
             {
-                if (t.getDate().getTime() > startDate && t.getDate().getTime() <= endDate)
+                for (AccountTransaction t : account.getTransactions())
                 {
-                    switch (t.getType())
+                    if (t.getDate().getTime() > startDate && t.getDate().getTime() <= endDate)
                     {
-                        case DIVIDENDS:
-                        case INTEREST:
-                            this.earnings.add(t);
-                            earnings += t.getAmount();
-                            if (t.getSecurity() != null)
-                            {
-                                Long v = earningsBySecurity.get(t.getSecurity());
-                                v = v == null ? t.getAmount() : v + t.getAmount();
-                                earningsBySecurity.put(t.getSecurity(), v);
-                            }
-                            else
-                            {
-                                otherEarnings += t.getAmount();
-                            }
-                            break;
-                        case DEPOSIT:
-                            deposits += t.getAmount();
-                            break;
-                        case REMOVAL:
-                            removals += t.getAmount();
-                            break;
-                        case FEES:
-                            fees += t.getAmount();
-                            break;
-                        case TAXES:
-                            taxes += t.getAmount();
-                            break;
-                        case BUY:
-                        case SELL:
-                        case TRANSFER_IN:
-                        case TRANSFER_OUT:
-                            // no operation
-                            break;
-                        default:
-                            throw new UnsupportedOperationException();
+                        switch (t.getType())
+                        {
+                            case DIVIDENDS:
+                            case INTEREST:
+                                this.earnings.add(t);
+                                earnings += t.getAmount();
+                                if (t.getSecurity() != null)
+                                {
+                                    Long v = earningsBySecurity.get(t.getSecurity());
+                                    v = v == null ? t.getAmount() : v + t.getAmount();
+                                    earningsBySecurity.put(t.getSecurity(), v);
+                                }
+                                else
+                                {
+                                    otherEarnings += t.getAmount();
+                                }
+                                break;
+                            case DEPOSIT:
+                                deposits += t.getAmount();
+                                break;
+                            case REMOVAL:
+                                removals += t.getAmount();
+                                break;
+                            case FEES:
+                                fees += t.getAmount();
+                                break;
+                            case TAXES:
+                                taxes += t.getAmount();
+                                break;
+                            case BUY:
+                            case SELL:
+                            case TRANSFER_IN:
+                            case TRANSFER_OUT:
+                                // no operation
+                                break;
+                            default:
+                                throw new UnsupportedOperationException();
+                        }
                     }
-                }
 
+                }
             }
         }
 
         for (Portfolio portfolio : client.getPortfolios())
         {
-            for (PortfolioTransaction t : portfolio.getTransactions())
+            if (portfolio.getIsReportable() == true)
             {
-                if (t.getDate().getTime() > startDate && t.getDate().getTime() <= endDate)
+                for (PortfolioTransaction t : portfolio.getTransactions())
                 {
-                    switch (t.getType())
+                    if (t.getDate().getTime() > startDate && t.getDate().getTime() <= endDate)
                     {
-                        case DELIVERY_INBOUND:
-                            deposits += t.getAmount();
-                            break;
-                        case DELIVERY_OUTBOUND:
-                            removals += t.getAmount();
-                            break;
-                        case BUY:
-                        case SELL:
-                        case TRANSFER_IN:
-                        case TRANSFER_OUT:
-                            break;
-                        default:
-                            throw new UnsupportedOperationException();
+                        switch (t.getType())
+                        {
+                            case DELIVERY_INBOUND:
+                                deposits += t.getAmount();
+                                break;
+                            case DELIVERY_OUTBOUND:
+                                removals += t.getAmount();
+                                break;
+                            case BUY:
+                            case SELL:
+                            case TRANSFER_IN:
+                            case TRANSFER_OUT:
+                                break;
+                            default:
+                                throw new UnsupportedOperationException();
+                        }
                     }
-                }
 
+                }
             }
         }
 

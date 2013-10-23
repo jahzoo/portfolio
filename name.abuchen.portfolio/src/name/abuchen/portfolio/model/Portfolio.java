@@ -8,6 +8,7 @@ public class Portfolio
 {
     private String uuid;
     private String name;
+    private boolean IsReportable;
 
     private Account referenceAccount;
 
@@ -16,6 +17,7 @@ public class Portfolio
     public Portfolio()
     {
         this.uuid = UUID.randomUUID().toString();
+        this.IsReportable = true;
     }
 
     public String getUUID()
@@ -37,6 +39,16 @@ public class Portfolio
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public boolean getIsReportable()
+    {
+        return IsReportable;
+    }
+
+    public void setIsReportable(boolean IsReportable)
+    {
+        this.IsReportable = IsReportable;
     }
 
     public Account getReferenceAccount()

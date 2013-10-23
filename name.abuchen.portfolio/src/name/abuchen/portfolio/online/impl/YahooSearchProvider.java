@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import name.abuchen.portfolio.Messages;
 import name.abuchen.portfolio.model.Security;
@@ -54,10 +55,10 @@ public class YahooSearchProvider implements SecuritySearchProvider
     public List<ResultItem> search(String query) throws IOException
     {
         try
-        {
+        {          
             URL url = new URL(String.format(SEARCH_URL, URLEncoder.encode(query + "*", "UTF-8"))); //$NON-NLS-1$ //$NON-NLS-2$
             Lexer lexer = new Lexer(url.openConnection());
-
+            
             List<ResultItem> answer = new Visitor().visit(lexer);
 
             if (answer.isEmpty())

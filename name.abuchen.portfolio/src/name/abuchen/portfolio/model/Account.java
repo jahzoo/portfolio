@@ -8,6 +8,7 @@ public class Account implements InvestmentVehicle
 {
     private String uuid;
     private String name;
+    private boolean isReportable;
 
     private List<AccountTransaction> transactions = new ArrayList<AccountTransaction>();
 
@@ -20,6 +21,7 @@ public class Account implements InvestmentVehicle
     {
         this();
         this.name = name;
+        this.isReportable = true;
     }
 
     @Override
@@ -45,7 +47,17 @@ public class Account implements InvestmentVehicle
     {
         this.name = name;
     }
+    
+    public boolean getIsReportable()
+    {
+        return isReportable;
+    }
 
+    public void setIsReportable(boolean isReportable)
+    {
+        this.isReportable = isReportable;
+    }
+    
     public List<AccountTransaction> getTransactions()
     {
         return transactions;
